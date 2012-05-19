@@ -214,3 +214,64 @@ describe "Transparency", ->
 
     expect(-> template.render data, directives)
     .toThrow new Error "Directive syntax is directive[element][attribute] = function(params)"
+
+
+  it "should handle directives of several nesting levels with lists", ->
+    template = $ """
+      <table id="checkout">
+        <tbody class="products">
+          <tr>
+            <td data-bind="id" />
+            <td>
+              <a data-bind="namelink">
+            </td>
+            <td>
+              <span data-bind="price"> EUR
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      """
+
+    data = 
+      products : [
+        id : 1
+        price: 100
+        name : "Doggy statue"
+        link : "#"
+      ,
+        id : 2
+        price: 200
+        name : "Catty statue"
+        link : "#"
+      ]
+
+    directives =
+      products:
+        namelink:
+          text: -> return @name
+          href: -> return @link
+
+
+    expected = $ """
+      <table id="checkout">
+        <tbody class="products">
+          <tr>
+            <td data-bind="id">1</td>
+            <td><a data-bind="namelink" href="#">Doggy statue</a></td>
+            <td><span data-bind="price">100</span></td>
+          </tr>
+          <tr>
+            <td data-bind="id">2</td>
+            <td><a data-bind="namelink" href="#">Catty statue</a></td>
+            <td><span data-bind="price">200</span></td>
+          </tr>          
+        </tbody>
+      </table>
+      """
+
+    template.render data, directives
+
+    # Render twice to make sure the class names are not duplicated
+    template.render data, directives
+    expect(template.html()).htmlToBeEqual expected.html()    
