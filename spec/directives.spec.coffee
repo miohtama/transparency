@@ -275,3 +275,92 @@ describe "Transparency", ->
     # Render twice to make sure the class names are not duplicated
     template.render data, directives
     expect(template.html()).htmlToBeEqual expected.html()    
+
+  it "should handle directives + nested directive + list combo", ->
+
+    # A template which has a switch between states by using styles
+
+    template = $ """
+      <div id="wrapper">
+      <div id="loading-message">
+        Loading
+      </div>
+
+      <table id="result">
+        <tbody class="products">
+          <tr>
+            <td data-bind="id" />
+            <td>
+              <a data-bind="namelink">
+            </td>
+            <td>
+              <span data-bind="price"> EUR
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+      """
+
+    data = 
+      loading: false
+      products : [
+        id : 1
+        price: 100
+        name : "Doggy statue"
+        link : "#"
+      ,
+        id : 2
+        price: 200
+        name : "Catty statue"
+        link : "#"
+      ]
+
+    visible = "display: block"
+    invisible = "display: none"
+
+    directives =
+
+      "loading-message":
+        style: -> 
+          return if @loading then visible else invisible 
+
+      result:
+        style: -> 
+          return if @loading then invisible else visible
+
+      products:
+        namelink:
+          text: -> return @name
+          href: -> return @link
+
+
+    expected = $ """
+      <div id="wrapper">
+      <div id="loading-message" style="display: none">
+        Loading
+      </div>
+
+      <table id="result" style="display: block">
+        <tbody class="products">
+          <tr>
+            <td data-bind="id">1</td>
+            <td><a data-bind="namelink" href="#">Doggy statue</a></td>
+            <td><span data-bind="price">100</span></td>
+          </tr>
+          <tr>
+            <td data-bind="id">2</td>
+            <td><a data-bind="namelink" href="#">Catty statue</a></td>
+            <td><span data-bind="price">200</span></td>
+          </tr>          
+        </tbody>
+      </table>
+      </div>
+      """
+
+
+    template.render data, directives
+
+    # Render twice to make sure the class names are not duplicated
+    template.render data, directives
+    expect(template.html()).htmlToBeEqual expected.html()        
