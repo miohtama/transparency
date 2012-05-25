@@ -32,7 +32,7 @@ $('#template').render(hello);
 * [Fast - in most cases the fastest client-side template engine](https://github.com/leonidas/transparency/wiki/Defining-template-engine-performance) 
 * Data binding by convention - no extra markup polluting your HTML code
 * Templating directives written in Javascript - no need to learn yet another micro programming language
-* Compatible - Tested on IE8+, Chrome, Firefox, iOS, Android and others
+* Compatible - Tested on IE6+, Chrome, Firefox, iOS, Android and others
 * Collection rendering - you don't need to write loops in templates
 
 Please see [Frequently asked questions](https://github.com/leonidas/transparency/wiki/Frequently-Asked-Questions)
